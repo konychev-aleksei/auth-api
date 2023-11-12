@@ -1,38 +1,13 @@
 import pool from "../db.js";
 
 class AuthRepository {
-  static async createUser({ userName, hashedPassword, refreshToken }) {
-    await pool.query(
-      "INSERT INTO Users (name, password, refresh_token) VALUES ($1, $2, $3)",
-      [userName, hashedPassword, refreshToken]
-    );
-  }
+  static async createUser() {}
 
-  static async getUserData(userName) {
-    const response = await pool.query("SELECT * FROM Users WHERE name=$1", [
-      userName,
-    ]);
+  static async getUserData() {}
 
-    if (!response.rows.length) {
-      return null;
-    }
+  static async setRefreshToken() {}
 
-    return response.rows[0];
-  }
-
-  static async setRefreshToken(userName, refreshToken) {
-    await pool.query("UPDATE Users SET refresh_token=$1 WHERE name=$2", [
-      refreshToken,
-      userName,
-    ]);
-  }
-
-  static async deleteRefreshToken(refreshToken) {
-    await pool.query(
-      "UPDATE Users SET refresh_token='' WHERE refresh_token=$1",
-      [refreshToken]
-    );
-  }
+  static async deleteRefreshToken() {}
 }
 
 export default AuthRepository;
