@@ -3,11 +3,11 @@ import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 
 class PostService {
-  static async login() {}
+  static async signIn() {}
 
-  static async registration() {}
+  static async signUp() {}
 
-  static async logout() {}
+  static async logOut() {}
 
   static async refresh() {}
 }

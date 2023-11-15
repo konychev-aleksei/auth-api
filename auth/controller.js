@@ -2,7 +2,7 @@ import AuthService from "./service.js";
 import ErrorsUtils from "../utils/errors.js";
 
 class AuthController {
-  static async login(req, res) {
+  static async signIn(req, res) {
     try {
       console.log(req.body);
       return res.sendStatus(200);
@@ -11,7 +11,7 @@ class AuthController {
     }
   }
 
-  static async registration(req, res) {
+  static async signUp(req, res) {
     try {
       console.log(req.body);
       return res.sendStatus(200);
@@ -20,7 +20,7 @@ class AuthController {
     }
   }
 
-  static async logout(req, res) {
+  static async logOut(req, res) {
     try {
       console.log(req.body);
       return res.sendStatus(200);

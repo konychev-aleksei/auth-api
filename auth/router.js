@@ -4,13 +4,13 @@ import AuthValidator from "./validator.js";
 
 const router = Router();
 
-router.post("/login", AuthValidator.login, AuthController.login);
+router.post("/sign-in", AuthValidator.signIn, AuthController.signIn);
 router.post(
-  "/registration",
-  AuthValidator.registration,
-  AuthController.registration
+  "/sign-up",
+  AuthValidator.signUp,
+  AuthController.signUp
 );
-router.delete("/logout", AuthValidator.logout, AuthController.logout);
+router.delete("/logout", AuthValidator.logOut, AuthController.logOut);
 router.post("/refresh", AuthValidator.refresh, AuthController.refresh);
 
 export default router;

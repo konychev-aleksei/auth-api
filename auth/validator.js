@@ -21,15 +21,15 @@ const refreshToken = Yup.object({
 });
 
 class AuthValidator {
-  static async login(req, res, next) {
+  static async signIn(req, res, next) {
     return validateRequest(req, res, next, userCredentials);
   }
 
-  static async registration(req, res, next) {
+  static async signUp(req, res, next) {
     return validateRequest(req, res, next, userCredentials);
   }
 
-  static async logout(req, res, next) {
+  static async logOut(req, res, next) {
     return validateRequest(req, res, next, refreshToken);
   }
 
