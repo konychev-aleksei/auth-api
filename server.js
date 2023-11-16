@@ -9,29 +9,36 @@ const proxyServer = express();
 const resourceServer = express();
 
 proxyServer.all("*", (req, res) => {
-  console.log(`http://localhost:5000`);
-  proxy.web(req, res, { target: `http://localhost:5000` });
-});
+  const headers = {};
 
+  if (req.cookies?.["access_token"]) {
+    headers = {
+      Authorization: `Bearer ${req.cookies["access_token"]}`,
+    };
+  }
+
+  proxy.web(req, res, {
+    target: `http://localhost:5000`,
+    ...headers,
+  });
+});
 proxyServer.use(express.json());
 proxyServer.use(cors());
-
 proxyServer.listen(8080, () => {
   console.log("Прокси-сервер успешно запущен");
 });
 
-
-//// 
-
 resourceServer.use(express.json());
-resourceServer.use(cors());
+resourceServer.use(
+  cors({ credentials: true, origin: "http://localhost:5173" })
+);
+resourceServer.use("/auth", authRootRouter);
+resourceServer.listen(5000, () => {
+  console.log("Сервер ресурсов успешно запущен");
+});
 
-// resourceServer.use("/auth", authRootRouter);
+// -- //
 
 resourceServer.get("/p", (_, res) => {
   res.sendStatus(200);
-});
-
-resourceServer.listen(5000, () => {
-  console.log("Веб-сервер успешно запущен");
 });
