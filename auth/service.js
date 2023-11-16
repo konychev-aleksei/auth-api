@@ -75,11 +75,18 @@ class AuthService {
     await AuthRepository.deleteRefreshSession(refreshToken);
   }
 
-  static async refresh(refreshToken) {
-    /*
+  static async refresh({ fingerPrint, refreshToken, user }) {
     if (!refreshToken) {
       throw new Unauthorized();
     }
+
+    const refreshSession = await AuthRepository.getRefreshSession(refreshToken);
+
+    if (!refreshSession) {
+      throw new Forbidden(error);
+    }
+
+    await AuthRepository.deleteRefreshSession(refreshToken);
 
     try {
       await jwt.verify(refreshToken, process.env.REFRESH_TOKEN_SECRET);
@@ -87,9 +94,18 @@ class AuthService {
       throw new Forbidden(error);
     }
 
-    const accessToken = generateAccessToken({ userName: "ww" });
-    return accessToken;
-    */
+    if (refreshSession.finger_print !== fingerPrint) {
+      throw new Forbidden(error);
+    }
+
+    const { refresh_token } = await AuthRepository.createRefreshSession({
+      id,
+      refreshToken,
+      fingerPrint,
+    });
+
+    const accessToken = generateAccessToken(user);
+    return { accessToken, refreshToken: refresh_token };
   }
 }
 

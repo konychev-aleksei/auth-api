@@ -1,5 +1,6 @@
 import AuthService from "./service.js";
 import ErrorsUtils from "../utils/errors.js";
+import { COOKIE_SETTINGS } from "../constants.js";
 
 class AuthController {
   static async signIn(req, res) {
@@ -11,11 +12,8 @@ class AuthController {
         fingerPrint,
       });
 
-      res.cookie("accessToken", accessToken, { httpOnly: true, maxAge: 1000 });
-      res.cookie("refreshToken", refreshToken, {
-        httpOnly: true,
-        maxAge: 1000,
-      });
+      res.cookie("accessToken", accessToken, COOKIE_SETTINGS.ACCESS_TOKEN);
+      res.cookie("refreshToken", refreshToken, COOKIE_SETTINGS.REFRESH_TOKEN);
 
       return res.sendStatus(200);
     } catch (err) {
@@ -33,11 +31,8 @@ class AuthController {
         fingerPrint,
       });
 
-      res.cookie("accessToken", accessToken, { httpOnly: true, maxAge: 1000 });
-      res.cookie("refreshToken", refreshToken, {
-        httpOnly: true,
-        maxAge: 1000,
-      });
+      res.cookie("accessToken", accessToken, COOKIE_SETTINGS.ACCESS_TOKEN);
+      res.cookie("refreshToken", refreshToken, COOKIE_SETTINGS.REFRESH_TOKEN);
 
       return res.sendStatus(200);
     } catch (err) {
@@ -57,10 +52,14 @@ class AuthController {
   }
 
   static async refresh(req, res) {
-    const { refreshToken } = req.body;
+    const { refreshToken, fingerPrint } = req.body;
 
     try {
-      const accessToken = await AuthService.refresh(refreshToken);
+      const accessToken = await AuthService.refresh({
+        refreshToken,
+        fingerPrint,
+        user: req.user,
+      });
 
       return res.status(200).set(accessToken);
     } catch (err) {
