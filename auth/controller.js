@@ -12,7 +12,7 @@ class AuthController {
         fingerPrint,
       });
 
-      res.cookie("accessToken", accessToken, COOKIE_SETTINGS.ACCESS_TOKEN);
+      res.cookie("accessToken", `Bearer ${accessToken}`, COOKIE_SETTINGS.ACCESS_TOKEN);
       res.cookie("refreshToken", refreshToken, COOKIE_SETTINGS.REFRESH_TOKEN);
 
       return res.sendStatus(200);
@@ -31,7 +31,7 @@ class AuthController {
         fingerPrint,
       });
 
-      res.cookie("accessToken", accessToken, COOKIE_SETTINGS.ACCESS_TOKEN);
+      res.cookie("accessToken", `Bearer ${accessToken}`, COOKIE_SETTINGS.ACCESS_TOKEN);
       res.cookie("refreshToken", refreshToken, COOKIE_SETTINGS.REFRESH_TOKEN);
 
       return res.sendStatus(200);

@@ -4,7 +4,7 @@ import dotenv from "dotenv";
 dotenv.config();
 
 export default (req, res, next) => {
-  const authHeader = req.headers["authorization"];
+  const authHeader = req.cookies?.["accessToken"];
   const token = authHeader?.split(" ")?.[1];
 
   if (!token) {
