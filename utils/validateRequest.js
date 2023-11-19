@@ -1,4 +1,4 @@
-import ErrorUtils, { Unprocessable } from "./errors.js";
+import ErrorUtils, { Unprocessable } from "./Errors.js";
 
 export default async (req, res, next, schema) => {
   try {

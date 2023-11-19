@@ -1,21 +1,24 @@
 import AuthService from "./service.js";
-import ErrorsUtils from "../utils/errors.js";
+import ErrorsUtils from "../utils/Errors.js";
 import { COOKIE_SETTINGS } from "../constants.js";
 
 class AuthController {
   static async signIn(req, res) {
     const { userName, password, fingerPrint } = req.body;
     try {
-      const { accessToken, refreshToken } = await AuthService.signIn({
+      const tokensData = await AuthService.signIn({
         userName,
         password,
         fingerPrint,
       });
 
-      res.cookie("accessToken", `Bearer ${accessToken}`, COOKIE_SETTINGS.ACCESS_TOKEN);
-      res.cookie("refreshToken", refreshToken, COOKIE_SETTINGS.REFRESH_TOKEN);
+      res.cookie(
+        "refreshToken",
+        tokensData.refreshToken,
+        COOKIE_SETTINGS.REFRESH_TOKEN
+      );
 
-      return res.sendStatus(200);
+      return res.status(200).json(tokensData);
     } catch (err) {
       return ErrorsUtils.catchError(res, err);
     }
@@ -24,17 +27,20 @@ class AuthController {
   static async signUp(req, res) {
     const { userName, password, role, fingerPrint } = req.body;
     try {
-      const { accessToken, refreshToken } = await AuthService.signUp({
+      const tokensData = await AuthService.signUp({
         userName,
         password,
         role,
         fingerPrint,
       });
 
-      res.cookie("accessToken", `Bearer ${accessToken}`, COOKIE_SETTINGS.ACCESS_TOKEN);
-      res.cookie("refreshToken", refreshToken, COOKIE_SETTINGS.REFRESH_TOKEN);
+      res.cookie(
+        "refreshToken",
+        tokensData.refreshToken,
+        COOKIE_SETTINGS.REFRESH_TOKEN
+      );
 
-      return res.sendStatus(200);
+      return res.status(200).json(tokensData);
     } catch (err) {
       return ErrorsUtils.catchError(res, err);
     }
@@ -44,6 +50,8 @@ class AuthController {
     const { refreshToken } = req.body;
     try {
       await AuthService.logOut(refreshToken);
+
+      res.clearCookie("refreshToken");
 
       return res.sendStatus(204);
     } catch (err) {

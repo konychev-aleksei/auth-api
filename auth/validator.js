@@ -1,4 +1,4 @@
-import validateRequest from "../utils/validateRequest.js";
+import validateRequest from "../utils/ValidateRequest.js";
 import * as Yup from "yup";
 
 export const signInSchema = Yup.object({

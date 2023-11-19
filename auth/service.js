@@ -3,12 +3,13 @@ import {
   Forbidden,
   Unauthorized,
   Conflict,
-} from "../utils/errors.js";
+} from "../../utils/Errors.js";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 import AuthRepository from "./repository.js";
 import generateAccessToken from "../utils/generateAccessToken.js";
 import generateRefreshToken from "../utils/generateRefreshToken.js";
+import { COOKIE_SETTINGS } from "../constants.js";
 
 class AuthService {
   static async signIn({ userName, password, fingerPrint }) {
@@ -37,7 +38,11 @@ class AuthService {
       fingerPrint,
     });
 
-    return { accessToken, refreshToken };
+    return {
+      accessToken,
+      refreshToken,
+      accessTokenExpiration: COOKIE_SETTINGS.ACCESS_TOKEN.maxAge,
+    };
   }
 
   static async signUp({ userName, password, fingerPrint, role }) {
@@ -64,7 +69,11 @@ class AuthService {
       fingerPrint,
     });
 
-    return { accessToken, refreshToken };
+    return {
+      accessToken,
+      refreshToken,
+      accessTokenExpiration: COOKIE_SETTINGS.ACCESS_TOKEN.maxAge,
+    };
   }
 
   static async logOut(refreshToken) {
