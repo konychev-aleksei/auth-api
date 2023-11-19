@@ -1,3 +1,5 @@
+import pool from "../db.js";
+
 class UserRepository {
   static async createUser({ userName, hashedPassword, role }) {
     const response = await pool.query(

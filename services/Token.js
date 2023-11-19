@@ -1,24 +1,24 @@
 import jwt from "jsonwebtoken";
 import dotenv from "dotenv";
-import { Forbidden, Unauthorized } from "./Errors.js";
+import { Forbidden, Unauthorized } from "../utils/Errors.js";
 
 dotenv.config();
 
 class TokenService {
   static async generateAccessToken(payload) {
-    return jwt.sign(payload, process.env.ACCESS_TOKEN_SECRET, {
+    return await jwt.sign(payload, process.env.ACCESS_TOKEN_SECRET, {
       expiresIn: "30m",
     });
   }
 
   static async generateRefreshToken(payload) {
-    return jwt.sign(payload, process.env.REFRESH_TOKEN_SECRET, {
+    return await jwt.sign(payload, process.env.REFRESH_TOKEN_SECRET, {
       expiresIn: "7d",
     });
   }
 
   static async authenticateUser(req, _, next) {
-    const authHeader = req.headers?.["Authrorization"];
+    const authHeader = req.headers.authorization;
     const token = authHeader?.split(" ")?.[1];
 
     if (!token) {

@@ -3,7 +3,7 @@ export const COOKIE_SETTINGS = {
     httpOnly: true,
     maxAge: 6048e5, // 7 * 24 * 3600 * 1000
     sameSite: "strict",
-    path: "/auth",
+    path: ["/auth/logout", "/auth/refresh"],
   },
 };
 

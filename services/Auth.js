@@ -1,18 +1,13 @@
-import {
-  NotFound,
-  Forbidden,
-  Unauthorized,
-  Conflict,
-} from "../../utils/Errors.js";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 import TokenService from "./Token.js";
+import { NotFound, Forbidden, Conflict } from "../utils/Errors.js";
 import RefreshSessionsRepository from "../repositories/RefreshSessions.js";
 import UserRepository from "../repositories/User.js";
 import { ACCESS_TOKEN_EXPIRATION } from "../constants.js";
 
 class AuthService {
-  static async signIn({ userName, password, fingerPrint }) {
+  static async signIn({ userName, password, fingerprint }) {
     const userData = await UserRepository.getUserData(userName);
     if (!userData) {
       throw new NotFound("Пользователь не найден!");
@@ -36,7 +31,7 @@ class AuthService {
     await RefreshSessionsRepository.createRefreshSession({
       userName,
       refreshToken,
-      fingerPrint,
+      fingerprint,
     });
 
     return {
@@ -46,7 +41,7 @@ class AuthService {
     };
   }
 
-  static async signUp({ userName, password, fingerPrint, role }) {
+  static async signUp({ userName, password, fingerprint, role }) {
     const userData = await UserRepository.getUserData(userName);
     if (userData) {
       throw new Conflict("Пользователь с таким именем уже существует!");
@@ -61,13 +56,13 @@ class AuthService {
 
     const payload = { userName, role, id };
 
-    const accessToken = TokenService.generateAccessToken(payload);
-    const refreshToken = TokenService.generateRefreshToken(payload);
+    const accessToken = await TokenService.generateAccessToken(payload);
+    const refreshToken = await TokenService.generateRefreshToken(payload);
 
     await RefreshSessionsRepository.createRefreshSession({
       id,
       refreshToken,
-      fingerPrint,
+      fingerprint,
     });
 
     return {
@@ -78,41 +73,46 @@ class AuthService {
   }
 
   static async logOut(refreshToken) {
-    if (!refreshToken) {
-      throw new Unauthorized();
-    }
-
     await RefreshSessionsRepository.deleteRefreshSession(refreshToken);
   }
 
-  static async refresh({ fingerPrint, currentRefreshToken }) {
-    const refreshSession = await RefreshSessionsRepository.getRefreshSessions(
+  static async refresh({ fingerprint, currentRefreshToken }) {
+    const refreshSessions = await RefreshSessionsRepository.getRefreshSessions(
       currentRefreshToken
     );
 
-    if (!refreshSession || refreshSession.finger_print !== fingerPrint) {
-      throw new Forbidden(error);
+    if (
+      !refreshSessions.length ||
+      refreshSession[0].finger_print !== fingerprint.hash
+    ) {
+      throw new Forbidden();
     }
 
     await RefreshSessionsRepository.deleteRefreshSession(currentRefreshToken);
 
     let payload;
     try {
-      payload = await jwt.verify(
-        refreshToken,
+      const { id, userName, role } = await jwt.verify(
+        currentRefreshToken,
         process.env.REFRESH_TOKEN_SECRET
       );
+
+      payload = {
+        id,
+        userName,
+        role,
+      };
     } catch (error) {
       throw new Forbidden(error);
     }
 
-    const accessToken = TokenService.generateAccessToken(payload);
-    const refreshToken = TokenService.generateRefreshToken(payload);
+    const accessToken = await TokenService.generateAccessToken(payload);
+    const refreshToken = await TokenService.generateRefreshToken(payload);
 
     await RefreshSessionsRepository.createRefreshSession({
-      id,
+      id: payload.id,
       refreshToken,
-      fingerPrint,
+      fingerprint,
     });
 
     return {

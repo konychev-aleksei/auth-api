@@ -22,6 +22,12 @@ export const signUpSchema = signInSchema.concat(
   })
 );
 
+export const refreshTokenRequiredSchema = Yup.object({
+  cookies: Yup.object({
+    refreshToken: Yup.string().required("Поле обязательно!"),
+  }),
+});
+
 class AuthValidator {
   static async signIn(req, res, next) {
     return validateRequest(req, res, next, signInSchema);
@@ -29,6 +35,14 @@ class AuthValidator {
 
   static async signUp(req, res, next) {
     return validateRequest(req, res, next, signUpSchema);
+  }
+
+  static async logOut(req, res, next) {
+    return validateRequest(req, res, next, refreshTokenRequiredSchema);
+  }
+
+  static async refresh(req, res, next) {
+    return validateRequest(req, res, next, refreshTokenRequiredSchema);
   }
 }
 
