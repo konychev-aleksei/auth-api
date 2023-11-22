@@ -25,8 +25,8 @@ class AuthService {
 
     const payload = { userName, role: userData.role, id: userData.id };
 
-    const accessToken = TokenService.generateAccessToken(payload);
-    const refreshToken = TokenService.generateRefreshToken(payload);
+    const accessToken = await TokenService.generateAccessToken(payload);
+    const refreshToken = await TokenService.generateRefreshToken(payload);
 
     await RefreshSessionsRepository.createRefreshSession({
       userName,
@@ -85,6 +85,7 @@ class AuthService {
       !refreshSessions.length ||
       refreshSession[0].finger_print !== fingerprint.hash
     ) {
+      console.log("Несанкционированная попытка обновления токенов");
       throw new Forbidden();
     }
 
