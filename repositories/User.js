@@ -3,7 +3,7 @@ import pool from "../db.js";
 class UserRepository {
   static async createUser({ userName, hashedPassword, role }) {
     const response = await pool.query(
-      "INSERT INTO Users (name, password, role) VALUES ($1, $2, $3) RETURNING *",
+      "INSERT INTO user (name, password, role) VALUES ($1, $2, $3) RETURNING *", // ед. число для сущностей
       [userName, hashedPassword, role]
     );
 
@@ -11,7 +11,7 @@ class UserRepository {
   }
 
   static async getUserData(userName) {
-    const response = await pool.query("SELECT * FROM Users WHERE name=$1", [
+    const response = await pool.query("SELECT * FROM user WHERE name=$1", [
       userName,
     ]);
 
