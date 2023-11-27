@@ -13,7 +13,7 @@ class AuthService {
       throw new NotFound("Пользователь не найден!");
     }
 
-    const hashedPassword = bcrypt.hashSync(password, 7);
+    const hashedPassword = bcrypt.hashSync(password, 8);
     const isPasswordValid = bcrypt.compareSync(
       hashedPassword,
       userData.password
