@@ -47,7 +47,7 @@ class AuthService {
       throw new Conflict("Пользователь с таким именем уже существует!");
     }
 
-    const hashedPassword = bcrypt.hashSync(password, 7);
+    const hashedPassword = bcrypt.hashSync(password, 8);
     const { id } = await UserRepository.createUser({
       userName,
       hashedPassword,
@@ -81,10 +81,11 @@ class AuthService {
       currentRefreshToken
     );
 
-    if (
-      !refreshSessions.length ||
-      refreshSession[0].finger_print !== fingerprint.hash
-    ) {
+    if (!refreshSessions.length) {
+      throw new Forbidden();
+    }
+
+    if (refreshSession[0].finger_print !== fingerprint.hash) {
       console.log("Несанкционированная попытка обновления токенов");
       throw new Forbidden();
     }
